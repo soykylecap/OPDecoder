@@ -81,7 +81,7 @@ topes_abajo = (
 #     )
 
 
-# # Juego 4:
+# Juego 4:
 # inicia_numeros = (
 #     None, None, None, None, 6, None, None,
 #     None, None, None, None, None, None, 3,
@@ -214,10 +214,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
 
 
 

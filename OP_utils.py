@@ -1,3 +1,4 @@
+
 import sys
 import math
 
@@ -33,32 +34,15 @@ class Tablero:
             lista_celdas.append(celda) #agrega esa posicion configurada a la lista de celdas
         #return lista_celdas
         self.celdas = lista_celdas
-    
-    def __str__(self):
-        return str(self.maximo)
-    
-    def __repr__(self):
-        return f"F{self.fila},C{self.columna}: Max: {self.max_posible} Pos: {self.ubicacion} Cand: {self.candidatos} SH: {self.segmento_horizontal} SV: {self.segmento_vertical}"
 
-
-# Quiero una funcion que separe en segmentos (verticales y horizontales) a los tableros. Actualmento esto lo hace la clase Maximos cuando se definen estos, pero quiero separar las tareas.
-
-
-class Maximos:
-    def __init__(self, tablero):
-        self.tablero = tablero
-        #self.tablero.celdas = celdas
-        # self.topes_derecha = topes_derecha
-        # self.topes_abajo = topes_abajo
-
-    def horizontales(self):
+    def maximos_horizontales(self):
         #Defino maximos y a que segmento pertenece cada celda (segun filas)
         maximos_horizontales = []
         segmentos_horizontales = []
         celdas_en_segmento = []
         cuenta_falsos = 0
         celda = -1
-        for cel in self.tablero.topes_derecha:
+        for cel in self.topes_derecha:
             celda = celda + 1
             if cel:
                 celdas_en_segmento.append(celda)
@@ -72,31 +56,22 @@ class Maximos:
                 celdas_en_segmento.append(celda)
 
         #Agrego esos maximos y los segmentos a las celdas
-        for n in range(self.tablero.maximo ** 2):
-            self.tablero.celdas[n].max_posible = maximos_horizontales[n]
+        for n in range(self.maximo ** 2):
+            self.celdas[n].max_posible = maximos_horizontales[n]
             for indice, sublista in enumerate(segmentos_horizontales):
                 if n in sublista:
-                    self.tablero.celdas[n].segmento_horizontal = indice + 1
+                    self.celdas[n].segmento_horizontal = indice + 1
 
-    def verticales(self):
-
-        
-
-        #Quiero encontrar una manera de recorrer las celdas a traves de las columnas como si estuviesen dispuestas horizontalmente. 
-
-
-
-
-
+    def maximos_verticales(self):
         #voy a convertir las columnas en filas para aplicar el mismo codigo que los horizontales.
         verticales_procesados = list()
         celdas_procesadas = []
-        for fila in range(self.tablero.maximo):
-            for columna in range(self.tablero.maximo):
-                celdas_procesadas.append(fila + (self.tablero.maximo * columna))
+        for fila in range(self.maximo):
+            for columna in range(self.maximo):
+                celdas_procesadas.append(fila + (self.maximo * columna))
 
-        for n in range(self.tablero.maximo):
-            columna = self.tablero.topes_abajo[n::self.tablero.maximo]
+        for n in range(self.maximo):
+            columna = self.topes_abajo[n::self.maximo]
             verticales_procesados.append(columna)
         verticales_procesados = sum(verticales_procesados, ())
         verticales_procesados = tuple(verticales_procesados)
@@ -122,23 +97,30 @@ class Maximos:
 
         #Regreso de Columnas a filas:
         regreso_horizontales = list()
-        for n in range(self.tablero.maximo):
-            fila = maximos_verticales[n::self.tablero.maximo]
+        for n in range(self.maximo):
+            fila = maximos_verticales[n::self.maximo]
             regreso_horizontales.append(fila)
 
         #Aplano la tupla    
         maximos_verticales = [item for sublist in regreso_horizontales for item in sublist]
 
-
         #Agrego esos maximos y esos segmentos a las celdas
-        for n in range(self.tablero.maximo ** 2):
-            if maximos_verticales[n] < self.tablero.celdas[n].max_posible:
-                self.tablero.celdas[n].max_posible = maximos_verticales[n]
+        for n in range(self.maximo ** 2):
+            if maximos_verticales[n] < self.celdas[n].max_posible:
+                self.celdas[n].max_posible = maximos_verticales[n]
 
             nueva_ubicacion = celdas_procesadas.index(n)
             for indice, sublista in enumerate(segmentos_verticales):
                 if n in sublista:
-                    self.tablero.celdas[nueva_ubicacion].segmento_vertical = indice + 1
+                    self.celdas[nueva_ubicacion].segmento_vertical = indice + 1
+    
+    def __str__(self):
+        return str(self.maximo)
+    
+    def __repr__(self):
+        return f"F{self.fila},C{self.columna}: Max: {self.max_posible} Pos: {self.ubicacion} Cand: {self.candidatos} SH: {self.segmento_horizontal} SV: {self.segmento_vertical}"
+
+
 
 class Candidatos:
     def __init__(self, tablero):
@@ -169,9 +151,8 @@ class Candidatos:
                 c.numero = candidatos[0]
 
 def resolver(intentos, tablero):
-    maximos = Maximos(tablero)
-    maximos.horizontales()
-    maximos.verticales()
+    tablero.maximos_horizontales()
+    tablero.maximos_verticales()
 
     intento = 0
     while intento <= intentos:
