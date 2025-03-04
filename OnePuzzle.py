@@ -1,124 +1,23 @@
 from OP_utils import *
 import pygame
+from OneLeeImagen import LeerOP
 
-
-# Juevo 1:
-inicia_numeros = (
-    5, None, None, None, None, 
-    None, None, None, None, None, 
-    None, None, None, None, None, 
-    None, None, None, None, None, 
-    None, None, None, None, 1
-    )
-topes_derecha = (
-    False, False, False, False, True, 
-    True, False, True, False, True, 
-    False, False, False, False, True, 
-    False, True, False, False, True, 
-    False, False, False, False, True
-    )
-topes_abajo = (
-    False, False, True, False, False,
-    False, False, False, True, False,
-    False, False, True, False, False,
-    False, False, False, False, False,
-    True, True, True, True, True
-    )
-
-
-# # Juego 2:
-# inicia_numeros = (
-#     None, 5, None, None, None, None, 
-#     None, None, None, 5, None, None, 
-#     None, None, 1, None, None, None, 
-#     None, None, None, None, None, None,
-#     None, None, None, None, None, None, 
-#     None, None, None, None, None, None
-# )
-
-# topes_derecha = (
-#     False, False, False, False, False, True,
-#     False, False, False, False, False, True,
-#     False, False, False, False, True, True,
-#     False, False, True, False, False, True,
-#     False, False, False, True, False, True,
-#     False, False, False, False, False, True
-# )
-
-# topes_abajo = (
-#     False, False, False, False, False, False, 
-#     False, False, False, False, False, False, 
-#     False, False, True, False, False, False, 
-#     True, False, False, False, False, False, 
-#     False, False, False, False, True, False, 
-#     True, True, True, True, True, True, 
-#     )
-
-
-# # Juego 3:
-# inicia_numeros = (
-#     None, None, None, None, None,
-#     None, None, None, None, None, 
-#     4, 3, None, None, None, 
-#     None, None, None, None, None, 
-#     None, None, None, None, None,
-#     )
-
-# topes_derecha = (
-#     False, False, False, False, True, 
-#     True, False, True, False, True,
-#     False, False, False, False, True,
-#     False, False, True, False, True, 
-#     False, False, False, False, True
-#     )
-
-# topes_abajo = (
-#     False, False, False, False, False,
-#     False, False, False, True, False,
-#     False, False, True, False, False,
-#     False, False, False, True, False,
-#     True, True, True, True, True,
-#     )
-
-
-# Juego 4:
-# inicia_numeros = (
-#     None, None, None, None, 6, None, None,
-#     None, None, None, None, None, None, 3,
-#     None, None, None, None, None, None, None,
-#     None, None, None, None, None, None, 1,
-#     None, None, 2, None, None, 3, None,
-#     None, None, None, None, None, None, None,
-#     None, None, None, None, None, None, None,
-#     )
-
-# topes_derecha = (
-#     False, False, False, False, False, False, True,
-#     False, False, False, True, False, False, True,
-#     False, False, True, False, False, False, True,
-#     False, False, False, False, False, False, True,
-#     False, False, False, False, False, False, True,
-#     False, False, False, True, False, False, True,
-#     False, True, False, False, False, False, True,
-#     )
-
-# topes_abajo = (
-#     False, False, False, False, False, False, False,
-#     True, False, False, False, False, False, False,
-#     False, False, True, False, False, True, False,
-#     False, True, False, False, False, False, False,
-#     False, False, False, False, False, False, False,
-#     False, False, False, False, False, False, False,
-#     True, True, True, True, True, True, True,
-#     )
+inicia_numeros, topes_abajo, topes_derecha = LeerOP()
 
 
 tablero = Tablero(int(math.sqrt(len(inicia_numeros))), topes_abajo, topes_derecha, inicia_numeros)
+
 tablero.configurar_celdas()
-resolver(2, tablero)
+tablero.maximos_horizontales()
+tablero.segmentos_horizontales()
+tablero.maximos_verticales()
+tablero.segmentos_verticales()
 
+resolver(16, tablero)
+#print (tablero.celdas)
 
-
+candidatos = Candidatos(tablero)
+candidatos.unico_en_segmento_horizontal()
 
 
 #Inicializar pygame
@@ -178,11 +77,12 @@ def draw_grid():
                 center=((celda_actual.columna - 0.5) * CELL_SIZE, (celda_actual.fila - 0.5) * CELL_SIZE)
             )
             screen.blit(text, text_rect)
-       # El siguiente else muestra los maximos posibles en las celdas vacias.
         else:
             font = pygame.font.Font(None, 15)
             font.italic = False
-            text = font.render(str(celda_actual.candidatos), True, GRAY)
+            mostrar_cuando_vacio = celda_actual.candidatos
+            #mostrar_cuando_vacio = celda_actual.segmento_vertical
+            text = font.render(str(mostrar_cuando_vacio), True, GRAY)
             text_rect = text.get_rect(
                 center=((celda_actual.columna - 0.5) * CELL_SIZE, (celda_actual.fila - 0.5) * CELL_SIZE)
             )
